@@ -1,0 +1,5 @@
+# Dependency directory
+node_modules
+
+# Local env file with credentials
+.env
