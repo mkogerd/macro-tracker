@@ -1,6 +1,8 @@
 const mysql = require('mysql');
 const express = require('express');
+const expressValidator = require('express-validator');
 require('dotenv').config();
+const bodyParser = require('body-parser');
 
 const con = mysql.createConnection({
 	host: process.env.DB_HOST,
@@ -9,6 +11,9 @@ const con = mysql.createConnection({
 });
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(expressValidator()); // This line must be immediately after any of the bodyParser middlewares
 
 // Add headers
 app.use(function (req, res, next) {
@@ -46,7 +51,7 @@ con.connect(function(err) {
 	});
 	
 	// Create tables for user data, ingredient data, and consumption records
-	var sql = "CREATE TABLE IF NOT EXISTS users (id int, name varchar(255))";
+	var sql = "CREATE TABLE IF NOT EXISTS users (id int, username varchar(255) NOT NULL UNIQUE, password binary(60) UNIQUE)";
 	con.query(sql, (err, result) => {
 		if (err) throw err;
 		console.log('User table created');
@@ -70,9 +75,26 @@ app.get('/', function(req, res) {
 app.get('/meals', function(req, res) {
 	con.query('SELECT * FROM food_record', function (err, result, fields){
 		if (err) throw err;
-		console.log('meal list successfully queried');
 		res.send(result);
 	});
+});
+
+app.post('/register', function(req, res, next) {
+	req.checkBody('username', 'Username field cannot be empty').notEmpty();
+	req.checkBody('password', 'Password field cannot be empty').notEmpty();
+	const errors = req.validationErrors();
+	
+	if (errors) {
+		console.log(`errors: ${JSON.stringify(errors)}`);
+		res.send({error: JSON.stringify(errors[0].msg)});
+	} else {
+		const user = req.body.username;
+		const pass = req.body.password;
+		con.query( "INSERT INTO users (username, password) VALUES (?, ?)", [user, pass], function(err, result, fields) {
+			if (err) throw err;
+			res.send({message:'Succesfully registered!'});
+		});
+	}
 });
 
 app.listen(5000, () => {
