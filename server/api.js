@@ -91,8 +91,12 @@ app.post('/register', function(req, res, next) {
 		const user = req.body.username;
 		const pass = req.body.password;
 		con.query( "INSERT INTO users (username, password) VALUES (?, ?)", [user, pass], function(err, result, fields) {
-			if (err) throw err;
-			res.send({message:'Succesfully registered!'});
+			try{
+				if (err) throw err;
+				res.send({message:'Succesfully registered!'});
+			} catch (err) {
+				res.send({error: err.sqlMessage});
+			}
 		});
 	}
 });
