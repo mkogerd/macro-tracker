@@ -35,11 +35,60 @@ class RegisterForm extends React.Component {
     return (
       <form onSubmit={this.onSubmit}>
         <label htmlFor="username">Enter username</label>
-        <input id="username" name="username" type="text" 
+        <input name="username" type="text" 
           value={this.state.username} onChange={this.onChange} />
 
-        <label htmlFor="email">Enter password</label>
-        <input id="password" name="password" type="password" 
+        <label htmlFor="password">Enter password</label>
+        <input name="password" type="password" 
+          value={this.state.password} onChange={this.onChange} />
+
+        <button>Send data!</button>
+      </form>
+    );
+  }
+}
+
+class LoginForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: '',
+    };
+  }
+
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+ 
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    // Send registration form state to API
+    fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => response.json())
+      .then(json => {
+        console.log(json.token);
+        localStorage.token = json.token;
+      });
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.onSubmit}>
+        <label htmlFor="username">Enter username</label>
+        <input name="username" type="text" 
+          value={this.state.username} onChange={this.onChange} />
+
+        <label htmlFor="password">Enter password</label>
+        <input name="password" type="password" 
           value={this.state.password} onChange={this.onChange} />
 
         <button>Send data!</button>
@@ -85,16 +134,30 @@ class App extends React.Component {
     super(props);
     this.state = {data: []};
 
+
+    // Send registration form state to API
+    fetch('http://localhost:5000/meals', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+	'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      }
+    })
+      .then(response => response.json())
+      .then(json => this.setState({ data: json }));
+/*
     // Load meal entries from database
     fetch('http://localhost:5000/meals')
       .then(response => response.json())
-      .then(json => this.setState({ data: json }));
+      .then(json => this.setState({ data: json }));*/
   }
 
   render() {
     return (
       <div>
         <RegisterForm />
+	<LoginForm />
         <MealTable data={this.state.data} />
       </div>
     );
