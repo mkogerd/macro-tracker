@@ -75,8 +75,9 @@ class LoginForm extends React.Component {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json.token);
-        localStorage.token = json.token;
+        console.log(json);
+	if (json.token)
+           localStorage.token = json.token;
       });
   }
 

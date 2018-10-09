@@ -48,7 +48,7 @@ con.connect(function(err) {
 	con.query("USE macrodb", (err, result) => { if (err) throw err; });
 	
 	// Create tables for user data, ingredient data, and consumption records
-	var sql = "CREATE TABLE IF NOT EXISTS users (id int, username varchar(255) NOT NULL UNIQUE, password binary(60) NOT NULL)";
+	var sql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL UNIQUE, password BINARY(60) NOT NULL)";
 	con.query(sql, (err, result) => { if (err) throw err; });
 	var sql = "CREATE TABLE IF NOT EXISTS food_info (id int, name varchar(255))";
 	con.query(sql, (err, result) => { if (err) throw err; });
@@ -66,7 +66,7 @@ app.get('/meals', verifyToken, function(req, res) {
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
-			con.query('SELECT * FROM food_record', function (err, result, fields){
+			con.query('SELECT * FROM food_record WHERE userID=?', authData.id, function (err, result, fields){
 				if (err) throw err;
 				res.send(result);
 			});
@@ -84,20 +84,20 @@ app.post('/login', function(req, res) {
 		return;
 	}
 	
-	const user = req.body.username;
+	const user = req.body.username.toLowerCase();;
 	const pass = req.body.password;
 	// Search for user in database
-	con.query("SELECT password FROM users WHERE username=? LIMIT 1", user, (err, result, fields) => {
+	con.query("SELECT password, id FROM users WHERE username=? LIMIT 1", user, (err, result, fields) => {
 		if (err) throw err;
 		if(result.length === 0) {
 			res.send({error: 'Username not found'});
 			return;
 		}
 		// Compare password input to hashed password from database
-		bcrypt.compare(pass, result[0].password.toString('utf8'), function(err, result) {
+		bcrypt.compare(pass, result[0].password.toString('utf8'), function(err, _result) {
 			if (err) throw err;
-			else if (result) {
-				jwt.sign({user: user}, 'secretkey', (err, token) => {
+			else if (_result) {
+				jwt.sign({id: result[0].id}, 'secretkey', (err, token) => {
 					res.json({ token: token });
 				});
 			}
@@ -116,7 +116,7 @@ app.post('/register', function(req, res, next) {
 		return;
 	}
 
-	const user = req.body.username;
+	const user = req.body.username.toLowerCase();;
 	const pass = req.body.password;
 	
 	bcrypt.hash(pass, saltRounds, (err, hash) => {
