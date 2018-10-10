@@ -50,9 +50,9 @@ con.connect(function(err) {
 	// Create tables for user data, ingredient data, and consumption records
 	var sql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL UNIQUE, password BINARY(60) NOT NULL)";
 	con.query(sql, (err, result) => { if (err) throw err; });
-	var sql = "CREATE TABLE IF NOT EXISTS food_info (id int, name varchar(255))";
+	var sql = "CREATE TABLE IF NOT EXISTS food_info (id INT, name VARCHAR(255))";
 	con.query(sql, (err, result) => { if (err) throw err; });
-	var sql = "CREATE TABLE IF NOT EXISTS food_record (id int, food varchar(255), volume int, weight int)";
+	var sql = "CREATE TABLE IF NOT EXISTS food_record (userID INT, date DATE NOT NULL, food VARCHAR(255), volume INT, weight INT)";
 	con.query(sql, (err, result) => { if (err) throw err; });
 
 	console.log('Database has been set up.');
@@ -69,6 +69,19 @@ app.get('/meals', verifyToken, function(req, res) {
 			con.query('SELECT * FROM food_record WHERE userID=?', authData.id, function (err, result, fields){
 				if (err) throw err;
 				res.send(result);
+			});
+		}
+	});
+});
+
+app.post('/post', verifyToken, function(req, res) {
+	// Store user input into meal entry
+	jwt.verify(req.token, 'secretkey', (err, authData) => {
+		if (err) console.log('Invalid token');
+		else {
+			con.query('INSERT INTO food_record (userID, date, food, weight) VALUES (?, ?, ?, ?)', [authData.id, req.body.date, req.body.food, req.body.weight], function (err, result, fields){
+				if (err) throw err;
+				else res.sendStatus(200); // Send success status
 			});
 		}
 	});

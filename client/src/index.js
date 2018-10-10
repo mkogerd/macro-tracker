@@ -34,6 +34,7 @@ class RegisterForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.onSubmit}>
+	<h3>Register</h3>
         <label htmlFor="username">Enter username</label>
         <input name="username" type="text" 
           value={this.state.username} onChange={this.onChange} />
@@ -76,14 +77,17 @@ class LoginForm extends React.Component {
       .then(response => response.json())
       .then(json => {
         console.log(json);
-	if (json.token)
+	if (json.token) {
            localStorage.token = json.token;
+           this.props.onLogin();
+        }
       });
   }
 
   render() {
     return (
       <form onSubmit={this.onSubmit}>
+	<h3>Login</h3>
         <label htmlFor="username">Enter username</label>
         <input name="username" type="text" 
           value={this.state.username} onChange={this.onChange} />
@@ -95,6 +99,56 @@ class LoginForm extends React.Component {
         <button>Send data!</button>
       </form>
     );
+  }
+}
+
+class EntryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      food: '',
+      weight: '',
+    };
+  }
+
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    // Send registration form state to API
+    fetch('http://localhost:5000/post', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+	'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify({date: this.props.date, ...this.state})
+    })
+      .then(response => {
+        if (response.status === 200) // Post successful
+          this.props.onUpdate();
+      });//response.json())
+      //.then(json => {console.log('no json?')});
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.onSubmit}>
+        <label htmlFor="food">Enter food</label>
+        <input name="food" type="text" 
+          value={this.state.username} onChange={this.onChange} />
+
+        <label htmlFor="weight">Enter weight</label>
+        <input name="weight" type="weight" 
+          value={this.state.password} onChange={this.onChange} />
+
+        <button>Send data!</button>
+      </form>
+    )
   }
 }
 
@@ -133,10 +187,22 @@ function MealTable(props) {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {data: []};
 
+    this.state = {
+      data: [],
+      date: new Date().toJSON().substring(0,10),
+      loggedIn: false,
+     };
 
-    // Send registration form state to API
+    //this.updateData = this.updateData.bind(this);
+  }
+
+  handleLogin() {
+    this.setState({loggedIn: true});
+    this.handleUpdate();
+  }
+
+  handleUpdate() {
     fetch('http://localhost:5000/meals', {
       method: 'GET',
       headers: {
@@ -146,23 +212,27 @@ class App extends React.Component {
       }
     })
       .then(response => response.json())
-      .then(json => this.setState({ data: json }));
-/*
-    // Load meal entries from database
-    fetch('http://localhost:5000/meals')
-      .then(response => response.json())
-      .then(json => this.setState({ data: json }));*/
+      .then(json => this.setState({data: json}));
   }
 
   render() {
-    return (
-      <div>
-        <RegisterForm />
-	<LoginForm />
-        <MealTable data={this.state.data} />
-      </div>
-    );
+    if (!this.state.loggedIn) {
+      return (
+        <div>
+          <RegisterForm />
+          <LoginForm onLogin={() => this.handleLogin()} />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <MealTable data={this.state.data} />
+          <EntryForm date={this.state.date} onUpdate={() => this.handleUpdate()}/>
+        </div>
+      );
+    }
   }
+
 }
 
 // =============================
