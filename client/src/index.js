@@ -131,8 +131,7 @@ class EntryForm extends React.Component {
       .then(response => {
         if (response.status === 200) // Post successful
           this.props.onUpdate();
-      });//response.json())
-      //.then(json => {console.log('no json?')});
+      });
   }
 
   render() {
@@ -147,6 +146,16 @@ class EntryForm extends React.Component {
           value={this.state.password} onChange={this.onChange} />
 
         <button>Send data!</button>
+      </form>
+    )
+  }
+}
+
+class DateForm extends React.Component {
+  render() {
+    return (
+      <form>
+        <input type="date" name="bday" value={this.props.date} onChange={this.props.onDateChange} />
       </form>
     )
   }
@@ -193,8 +202,6 @@ class App extends React.Component {
       date: new Date().toJSON().substring(0,10),
       loggedIn: false,
      };
-
-    //this.updateData = this.updateData.bind(this);
   }
 
   handleLogin() {
@@ -203,16 +210,20 @@ class App extends React.Component {
   }
 
   handleUpdate() {
-    fetch('http://localhost:5000/meals', {
+    fetch('http://localhost:5000/meals?date='+this.state.date, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
 	'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      }
+      },
     })
       .then(response => response.json())
       .then(json => this.setState({data: json}));
+  }
+
+  handleDateChange(e) {
+    this.setState({date: e.target.value}, () => {this.handleUpdate();});
   }
 
   render() {
@@ -226,6 +237,7 @@ class App extends React.Component {
     } else {
       return (
         <div>
+          <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} />
           <MealTable data={this.state.data} />
           <EntryForm date={this.state.date} onUpdate={() => this.handleUpdate()}/>
         </div>

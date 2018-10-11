@@ -66,7 +66,7 @@ app.get('/meals', verifyToken, function(req, res) {
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
-			con.query('SELECT * FROM food_record WHERE userID=?', authData.id, function (err, result, fields){
+			con.query('SELECT * FROM food_record WHERE userID=? AND date=?', [authData.id, req.query.date], function (err, result, fields){
 				if (err) throw err;
 				res.send(result);
 			});
