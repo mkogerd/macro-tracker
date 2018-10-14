@@ -154,9 +154,11 @@ class EntryForm extends React.Component {
 class DateForm extends React.Component {
   render() {
     return (
-      <form>
-        <input type="date" name="bday" value={this.props.date} onChange={this.props.onDateChange} />
-      </form>
+      <div>
+	<button onClick={() => this.props.onDayChange(-1)} >Previous</button>
+        <input type="date" value={this.props.date} onChange={this.props.onDateChange} />
+        <button onClick={() => this.props.onDayChange(1)} >Next</button>
+      </div>
     )
   }
 }
@@ -202,6 +204,8 @@ class App extends React.Component {
       date: new Date().toJSON().substring(0,10),
       loggedIn: false,
      };
+
+     this.handleDayChange = this.handleDayChange.bind(this);
   }
 
   handleLogin() {
@@ -219,11 +223,19 @@ class App extends React.Component {
       },
     })
       .then(response => response.json())
-      .then(json => this.setState({data: json}));
+      .then(json => {this.setState({data: json}); console.log(json);});
   }
 
   handleDateChange(e) {
+    // Change date as specified by calendar
     this.setState({date: e.target.value}, () => {this.handleUpdate();});
+  }
+  
+  handleDayChange(i) {
+    // Change date by a single day
+    let date = new Date(this.state.date);
+    date.setDate(date.getDate() + i);
+    this.setState({date: date.toJSON().substring(0,10)}, () => {this.handleUpdate();});
   }
 
   render() {
@@ -237,7 +249,7 @@ class App extends React.Component {
     } else {
       return (
         <div>
-          <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} />
+          <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <MealTable data={this.state.data} />
           <EntryForm date={this.state.date} onUpdate={() => this.handleUpdate()}/>
         </div>
