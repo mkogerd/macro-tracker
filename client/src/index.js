@@ -76,8 +76,7 @@ class LoginForm extends React.Component {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json);
-	if (json.token) {
+	      if (json.token) {
            localStorage.token = json.token;
            this.props.onLogin();
         }
@@ -129,7 +128,6 @@ class DailyTotals extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // Update daily macro totals
-    console.log('constructing daily totals for '+nextProps.date);
     fetch('http://localhost:5000/totals?date='+nextProps.date, {
       method: 'GET',
       headers: {
@@ -139,7 +137,7 @@ class DailyTotals extends React.Component {
       },
     })
       .then(response => response.json())
-      .then(json => {this.setState(json); console.log(json);});
+      .then(json => {this.setState(json)});
   }
 
 
@@ -164,6 +162,7 @@ function MealEntry(props) {
       <td>{props.protein}</td>
       <td>{props.carb}</td>
       <td>{props.fat}</td>
+      <td><button onClick={() => props.onDelete(props.id)}>X</button></td>
     </tr>
   );
 }
@@ -171,7 +170,7 @@ function MealEntry(props) {
 function MealTable(props) {
   // Load meal entries collected from database
   const mealEntries = props.data.map((entry, index) =>
-    <MealEntry key={index} {...entry}/>
+    <MealEntry key={index} onDelete={props.onDelete} {...entry}/>
   );
 
   return (
@@ -260,10 +259,6 @@ class FoodSearch extends React.Component {
       .then(json => {this.setState({results: json})});
   }
 
-  handleClick = (name) => {
-    console.log('clicked on '+ name);
-  }
-
   render() {
     const searchResults = this.state.results.map((entry) =>
       <SearchResult onClick={this.handleClick} onUpdate={this.props.onUpdate} date={this.props.date} key={entry.id} {...entry}/>
@@ -346,6 +341,7 @@ class App extends React.Component {
      };
 
      this.handleDayChange = this.handleDayChange.bind(this);
+     this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleLogin() {
@@ -379,6 +375,24 @@ class App extends React.Component {
     this.setState({date: date.toJSON().substring(0,10)}, () => {this.handleUpdate();});
   }
 
+  handleDelete(id) {
+    // Delete a record
+    fetch('http://localhost:5000/records?id='+id, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+    })
+      .then(response => {
+        if (response.status === 200) {
+          console.log('Successfully deleted entry');
+          this.handleUpdate();
+        }
+      });
+  }
+
   render() {
     if (!this.state.loggedIn) {
       return (
@@ -392,7 +406,7 @@ class App extends React.Component {
         <div>
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <DailyTotals date={this.state.date} />
-          <MealTable data={this.state.data} />
+          <MealTable data={this.state.data} onDelete={this.handleDelete}/>
           <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()} />
           <NewFoodForm />
         </div>
@@ -401,6 +415,6 @@ class App extends React.Component {
   }
 }
 
-// =============================
+// ========================================================
 
 ReactDOM.render(<App />, document.getElementById('root'));

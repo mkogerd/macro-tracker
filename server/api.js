@@ -93,6 +93,20 @@ app.post('/records', verifyToken, function(req, res) {
 	});
 });
 
+// Delete meal record for a particular user
+app.delete('/records', verifyToken, function(req, res) {
+	jwt.verify(req.token, 'secretkey', (err, authData) => {
+		if (err) console.log('Invalid token');
+		else {
+			let sql = `DELETE FROM records WHERE userID = ? AND id = ?`;
+			con.query(sql, [authData.id, req.query.id], function (err, result, fields){
+				if (err) throw err;
+				else res.sendStatus(200); // Send success status
+			});
+		}
+	});
+});
+
 app.get('/foods', function(req, res) {
 	console.log(req.query.food);
 	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food, function (err, result, fields){
