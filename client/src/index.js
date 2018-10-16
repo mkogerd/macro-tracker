@@ -286,8 +286,6 @@ class App extends React.Component {
      };
 
      this.handleDayChange = this.handleDayChange.bind(this);
-     this.tempFunc = this.tempFunc.bind(this); // DELETE THIS
-
   }
 
   handleLogin() {
@@ -333,22 +331,6 @@ class App extends React.Component {
     this.setState({date: date.toJSON().substring(0,10)}, () => {this.handleUpdate();});
   }
 
-// TEMPORARY FUNCTION FOR API TESTING
-  tempFunc(e) {
-    e.preventDefault();
-    console.log('Testing totals call...');
-    fetch('http://localhost:5000/totals?date='+this.state.date, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-  'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-      .then(response => response.json())
-      .then(json => {console.log(json)});
-  }
-
   render() {
     if (!this.state.loggedIn) {
       return (
@@ -362,7 +344,6 @@ class App extends React.Component {
         <div>
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <DailyTotals date={this.state.date} />
-          <form onSubmit={this.tempFunc}> <input type="submit" /> </form>
           <MealTable data={this.state.data} />
           <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()}/>
         </div>
