@@ -266,11 +266,65 @@ class FoodSearch extends React.Component {
     return (
       <div>
         <form onSubmit={this.onSubmit}>
-        <input name="foodSearch" type="search" placeholder="Enter a food to search"
-          value={this.state.foodSearch} onChange={this.onChange} />
+          <input name="foodSearch" type="search" placeholder="Enter a food to search"
+            value={this.state.foodSearch} onChange={this.onChange} />
         </form>
         {searchResults}
       </div>
+    );
+  }
+}
+
+class NewFoodForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      protein: '',
+      carb: '',
+      fat: '',
+      serving_grams: '',
+    };
+  }
+
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    // Send new record data to API to update user record
+    fetch('http://localhost:5000/foods', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => {
+        if (response.status === 200) // Post successful
+          console.log('new food added');
+        else console.log(response);
+      });
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.onSubmit}>
+        <input name="name" type="text" placeholder="Enter food name"
+            value={this.state.name} onChange={this.onChange} /> 
+        <input name="protein" type="number" placeholder="Enter protein content" step="0.01"
+            value={this.state.protein} onChange={this.onChange} />g 
+        <input name="carb" type="number" placeholder="Enter carb content" step="0.01"
+            value={this.state.carb} onChange={this.onChange} />g 
+        <input name="fat" type="number" placeholder="Enter fat content" step="0.01"
+            value={this.state.fat} onChange={this.onChange} />g 
+        <input name="serving_grams" type="number" placeholder="Enter serving size" step="0.01"
+            value={this.state.serving_grams} onChange={this.onChange} />g
+        <input type="submit" value="Submit"/>
+      </form>
     );
   }
 }
@@ -305,18 +359,6 @@ class App extends React.Component {
     })
       .then(response => response.json())
       .then(json => {this.setState({data: json})});
-
-    // Update daily macro totals
-    /*fetch('http://localhost:5000/totals?date='+this.state.date, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-      .then(response => response.json())
-      .then(json => {this.setState({totals: json}); console.log(json);});*/
   }
 
   handleDateChange(e) {
@@ -345,7 +387,8 @@ class App extends React.Component {
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <DailyTotals date={this.state.date} />
           <MealTable data={this.state.data} />
-          <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()}/>
+          <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()} />
+          <NewFoodForm />
         </div>
       );
     }

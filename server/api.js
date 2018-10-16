@@ -95,17 +95,17 @@ app.get('/foods', function(req, res) {
 	});
 });
 
-app.post('/foods', /*verifyToken,*/ function(req, res) {
+app.post('/foods', verifyToken, function(req, res) {
 	// Store user input into meal entry
-/*	jwt.verify(req.token, 'secretkey', (err, authData) => {
+	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
-		else {*/
+		else {
 			con.query('INSERT INTO foods (name, protein, carb, fat, serving_grams) VALUES (?, ?, ?, ?, ?)', [req.body.name, req.body.protein, req.body.carb, req.body.fat, req.body.serving_grams], function (err, result, fields){
 				if (err) throw err;
 				else res.sendStatus(200); // Send success status
 			});
-/*		}
-	});*/
+		}
+	});
 });
 
 // Find total proteins, carbs, and fats cosumed on a given day for a verified user
