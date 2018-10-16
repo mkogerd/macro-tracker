@@ -50,9 +50,9 @@ con.connect(function(err) {
 	// Create tables for user data, ingredient data, and consumption records
 	var sql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL UNIQUE, password BINARY(60) NOT NULL)";
 	con.query(sql, (err, result) => { if (err) throw err; });
-	var sql = "CREATE TABLE IF NOT EXISTS food_info (id INT, name VARCHAR(255))";
+	var sql = "CREATE TABLE IF NOT EXISTS foods (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), protein DECIMAL(6,2), carb DECIMAL(6,2), fat DECIMAL(6,2), serving_grams DECIMAL(7,2))";
 	con.query(sql, (err, result) => { if (err) throw err; });
-	var sql = "CREATE TABLE IF NOT EXISTS food_record (userID INT, date DATE NOT NULL, food VARCHAR(255), volume INT, weight INT)";
+	var sql = "CREATE TABLE IF NOT EXISTS records (id INT AUTO_INCREMENT PRIMARY KEY, userID INT, foodID INT, date DATE NOT NULL, grams DECIMAL(7,2))";
 	con.query(sql, (err, result) => { if (err) throw err; });
 
 	console.log('Database has been set up.');
@@ -62,11 +62,11 @@ app.get('/', function(req, res) {
 	res.send('Hello World!')
 });
 
-app.get('/meals', verifyToken, function(req, res) {
+app.get('/records', verifyToken, function(req, res) {
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
-			con.query('SELECT * FROM food_record WHERE userID=? AND date=?', [authData.id, req.query.date], function (err, result, fields){
+			con.query('SELECT * FROM records WHERE userID=? AND date=?', [authData.id, req.query.date], function (err, result, fields){
 				if (err) throw err;
 				res.send(result);
 			});
@@ -74,14 +74,57 @@ app.get('/meals', verifyToken, function(req, res) {
 	});
 });
 
-app.post('/post', verifyToken, function(req, res) {
+app.post('/records', verifyToken, function(req, res) {
 	// Store user input into meal entry
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
-			con.query('INSERT INTO food_record (userID, date, food, weight) VALUES (?, ?, ?, ?)', [authData.id, req.body.date, req.body.food, req.body.weight], function (err, result, fields){
+			con.query('INSERT INTO records (userID, foodID, date, grams) VALUES (?, ?, ?, ?)', [authData.id, req.body.foodID, req.body.date, req.body.weight], function (err, result, fields){
 				if (err) throw err;
 				else res.sendStatus(200); // Send success status
+			});
+		}
+	});
+});
+
+app.get('/foods', function(req, res) {
+	console.log(req.query.food);
+	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food, function (err, result, fields){
+		if (err) throw err;
+		res.send(result);
+	});
+});
+
+app.post('/foods', /*verifyToken,*/ function(req, res) {
+	// Store user input into meal entry
+/*	jwt.verify(req.token, 'secretkey', (err, authData) => {
+		if (err) console.log('Invalid token');
+		else {*/
+			con.query('INSERT INTO foods (name, protein, carb, fat, serving_grams) VALUES (?, ?, ?, ?, ?)', [req.body.name, req.body.protein, req.body.carb, req.body.fat, req.body.serving_grams], function (err, result, fields){
+				if (err) throw err;
+				else res.sendStatus(200); // Send success status
+			});
+/*		}
+	});*/
+});
+
+// Find total proteins, carbs, and fats cosumed on a given day for a verified user
+app.get('/totals', verifyToken, function(req, res) {
+	jwt.verify(req.token, 'secretkey', (err, authData) => {
+		if (err) console.log('Invalid token');
+		else {
+			let sql = 
+				`SELECT IFNULL(ROUND(SUM(protein*grams/serving_grams),2),0) AS 'protein', 
+				IFNULL(ROUND(SUM(carb*grams/serving_grams),2),0) AS 'carb', 
+				IFNULL(ROUND(SUM(fat*grams/serving_grams),2),0) AS 'fat', 
+				IFNULL(ROUND(SUM((protein*4+carb*4+fat*9)*grams/serving_grams),2),0) AS 'cal'
+				FROM records 
+				JOIN foods ON records.foodID = foods.id 
+				WHERE userID=? AND date=?`;
+
+			con.query(sql, [authData.id, req.query.date], function (err, result, fields){
+				if (err) throw err;
+				res.send(result[0]);
 			});
 		}
 	});
