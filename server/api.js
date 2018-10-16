@@ -66,7 +66,13 @@ app.get('/records', verifyToken, function(req, res) {
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
-			con.query('SELECT * FROM records WHERE userID=? AND date=?', [authData.id, req.query.date], function (err, result, fields){
+			let sql = `SELECT name, records.id,  grams,
+				(protein*grams/serving_grams) AS protein, (carb*grams/serving_grams) AS carb,
+				(fat*grams/serving_grams) AS fat
+				FROM records JOIN foods ON records.foodID = foods.ID 
+				WHERE userID=? AND date=?`;
+
+			con.query(sql, [authData.id, req.query.date], function (err, result, fields){
 				if (err) throw err;
 				res.send(result);
 			});

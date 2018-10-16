@@ -150,7 +150,6 @@ class DailyTotals extends React.Component {
         <span>P:{this.state.protein}g </span>
         <span>F:{this.state.fat}g </span>
         <span>kCals:{this.state.cal}g</span>
-
       </div>
     );
   }
@@ -159,8 +158,12 @@ class DailyTotals extends React.Component {
 function MealEntry(props) {
   return (
     <tr>
-      <td>{props.foodID}</td>
+      <td>{props.name}</td>
+      <td>{props.id}</td>
       <td>{props.grams}</td>
+      <td>{props.protein}</td>
+      <td>{props.carb}</td>
+      <td>{props.fat}</td>
     </tr>
   );
 }
@@ -175,9 +178,12 @@ function MealTable(props) {
     <table>
       <thead>
         <tr>
-          <th>Meals</th>
-          <th>Volume</th>
-          <th>Weight</th>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Grams</th>
+          <th>Protein</th>
+          <th>Carb</th>
+          <th>Fat</th>
         </tr>
       </thead>
       <tbody>
