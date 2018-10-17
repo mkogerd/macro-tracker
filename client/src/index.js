@@ -79,7 +79,7 @@ class LoginForm extends React.Component {
 	      if (json.token) {
            localStorage.token = json.token;
            this.props.onLogin();
-        }
+        } else console.log(json);
       });
   }
 
@@ -212,9 +212,11 @@ class SearchResult extends React.Component {
       },
       body: JSON.stringify({date: this.props.date, foodID: this.props.id, weight: this.state.amount})
     })
-      .then(response => {
-        if (response.status === 200) // Post successful
-          this.props.onUpdate();
+      .then(response => response.json())
+      .then(json => {
+        if (json.errors)
+          console.log(json.errors);
+        else this.props.onUpdate();
       });
   }
 
@@ -256,7 +258,11 @@ class FoodSearch extends React.Component {
     // Query database for specified food
     fetch('http://localhost:5000/foods?food='+this.state.foodSearch)
       .then(response => response.json())
-      .then(json => {this.setState({results: json})});
+      .then(json => {
+        if (json.errors)
+          console.log(json);
+        else this.setState({results: json});
+      });
   }
 
   render() {
@@ -294,7 +300,7 @@ class NewFoodForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    // Send new record data to API to update user record
+    // Send new food data to API to add to food listing
     fetch('http://localhost:5000/foods', {
       method: 'POST',
       headers: {
@@ -304,11 +310,8 @@ class NewFoodForm extends React.Component {
       },
       body: JSON.stringify(this.state)
     })
-      .then(response => {
-        if (response.status === 200) // Post successful
-          console.log('new food added');
-        else console.log(response);
-      });
+      .then(response => response.json())
+      .then(json => console.log(json));
   }
 
   render() {

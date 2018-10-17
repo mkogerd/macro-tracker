@@ -7,6 +7,8 @@ const mysql = require('mysql'),
 	jwt = require('jsonwebtoken'),
 	app = express();
 
+const { check, validationResult } = require('express-validator/check');
+
 require('dotenv').config();
 
 // configure lbraries and add express headers
@@ -80,14 +82,22 @@ app.get('/records', verifyToken, function(req, res) {
 	});
 });
 
-app.post('/records', verifyToken, function(req, res) {
+app.post('/records', verifyToken, [ // Check if user input is valid
+	check('weight')
+		.isFloat({lt: 100000, min: 0.01}).withMessage('Grams consumed must be a decimal from 0.01-99999')
+	], (req, res) => {
+	const errors = validationResult(req);
+  	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	} 
+
 	// Store user input into meal entry
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
 			con.query('INSERT INTO records (userID, foodID, date, grams) VALUES (?, ?, ?, ?)', [authData.id, req.body.foodID, req.body.date, req.body.weight], function (err, result, fields){
 				if (err) throw err;
-				else res.sendStatus(200); // Send success status
+				else res.json('Successfully posted record'); // Send success status
 			});
 		}
 	});
@@ -107,22 +117,50 @@ app.delete('/records', verifyToken, function(req, res) {
 	});
 });
 
-app.get('/foods', function(req, res) {
-	console.log(req.query.food);
+app.get('/foods', [ // Check if user input is valid
+	check('food')
+		.isLength({ min:1 }).withMessage('Search field cannot be empty')
+		.isAlphanumeric().withMessage('Search field must be alphanumeric')
+	], (req, res) => {
+	const errors = validationResult(req);
+  	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	} 
+
 	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food, function (err, result, fields){
 		if (err) throw err;
 		res.send(result);
 	});
 });
 
-app.post('/foods', verifyToken, function(req, res) {
+app.post('/foods', verifyToken,[ // Check if user input is valid
+	check('name')
+		.isLength({ min:1 }).withMessage('Name field cannot be empty')
+		.isAlphanumeric().withMessage('Name field must be alphanumeric'),
+	check('protein')
+		.isFloat({lt: 10000, min: 0}).withMessage('Protein must be a decimal from 0-9999'),
+	check('carb')
+		.isFloat({lt: 10000, min: 0}).withMessage('Carb must be a decimal from 0-9999'),
+	check('fat')
+		.isFloat({lt: 10000, min: 0}).withMessage('Fat must be a decimal from 0-9999'),
+	check('serving_grams')
+		.isFloat({lt: 100000, min: 0.01}).withMessage('Serving size must be a decimal from 0.01-99999')
+	], (req, res, next) => {
+
+	const errors = validationResult(req);
+  	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	} 
+
 	// Store user input into meal entry
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
 		else {
 			con.query('INSERT INTO foods (name, protein, carb, fat, serving_grams) VALUES (?, ?, ?, ?, ?)', [req.body.name, req.body.protein, req.body.carb, req.body.fat, req.body.serving_grams], function (err, result, fields){
 				if (err) throw err;
-				else res.sendStatus(200); // Send success status
+				else 
+					res.send({message:'Succesfully added food'});
+			//res.sendStatus(200); // Send success status
 			});
 		}
 	});
@@ -150,15 +188,19 @@ app.get('/totals', verifyToken, function(req, res) {
 	});
 });
 
-app.post('/login', function(req, res) {
-	req.checkBody('username', 'Username field cannot be empty').notEmpty();
-	req.checkBody('password', 'Password field cannot be empty').notEmpty();
-	const errors = req.validationErrors();
-	
-	if (errors) { // Check for input errors
-		res.send({error: JSON.stringify(errors[0].msg)});
-		return;
-	}
+app.post('/login', [ // Check if user input is valid
+	check('username')
+		.isLength({ min:1 }).withMessage('Username field cannot be empty')
+		.isAlphanumeric().withMessage('Username field must be alphanumeric'),
+	check('password')
+		.isLength({ min:1 }).withMessage('Password field cannot be empty')
+		.isAlphanumeric().withMessage('Password field must be alphanumeric')
+		], (req, res) => {
+
+	const errors = validationResult(req);
+  	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	}
 	
 	const user = req.body.username.toLowerCase();;
 	const pass = req.body.password;
@@ -182,15 +224,19 @@ app.post('/login', function(req, res) {
 	});
 });
 
-app.post('/register', function(req, res, next) {
-	req.checkBody('username', 'Username field cannot be empty').notEmpty();
-	req.checkBody('password', 'Password field cannot be empty').notEmpty();
-	const errors = req.validationErrors();
-	
-	if (errors) { // Check for input errors
-		res.send({error: JSON.stringify(errors[0].msg)});
-		return;
-	}
+app.post('/register', [ // Check if user input is valid
+	check('username')
+		.isLength({ min:1 }).withMessage('Username field cannot be empty')
+		.isAlphanumeric().withMessage('Username field must be alphanumeric'),
+	check('password')
+		.isLength({ min:1 }).withMessage('Password field cannot be empty')
+		.isAlphanumeric().withMessage('Password field must be alphanumeric')
+		], (req, res, next) => {
+
+	const errors = validationResult(req);
+  	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	}
 
 	const user = req.body.username.toLowerCase();;
 	const pass = req.body.password;
