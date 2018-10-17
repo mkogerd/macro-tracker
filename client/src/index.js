@@ -157,7 +157,6 @@ function MealEntry(props) {
   return (
     <tr>
       <td>{props.name}</td>
-      <td>{props.id}</td>
       <td>{props.grams}</td>
       <td>{props.protein}</td>
       <td>{props.carb}</td>
@@ -178,7 +177,6 @@ function MealTable(props) {
       <thead>
         <tr>
           <th>Name</th>
-          <th>ID</th>
           <th>Grams</th>
           <th>Protein</th>
           <th>Carb</th>
