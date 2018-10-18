@@ -1,5 +1,5 @@
 import React from 'react';
-import Drawer from '@material-ui/core/Drawer';
+import { Drawer, TextField, List, ListItem, ListItemText, Dialog, InputAdornment } from '@material-ui/core';
 
 export default class FoodSearch extends React.Component {
   constructor(props) {
@@ -10,9 +10,9 @@ export default class FoodSearch extends React.Component {
     };
   }
 
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
+  handleChange = prop => event => {
+    this.setState({ [prop]: event.target.value });
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -28,18 +28,31 @@ export default class FoodSearch extends React.Component {
 
   render() {
     const searchResults = this.state.results.map((entry) =>
-      <SearchResult onClick={this.handleClick} onUpdate={this.props.onUpdate} date={this.props.date} key={entry.id} {...entry}/>
+      <SearchResult onUpdate={this.props.onUpdate} date={this.props.date} key={entry.id} {...entry}/>
     );
 
     return (
       <div>
         
         <Drawer anchor="right" open={this.props.open} onClose={this.props.onClose}>
+
           <form onSubmit={this.onSubmit}>
-            <input name="foodSearch" type="search" placeholder="Enter a food to search"
-              value={this.state.foodSearch} onChange={this.onChange} />
+            <TextField
+              style={{margin: 0}}
+              variant="filled"
+              label="Enter a food to search"
+              value={this.state.foodSearch}
+              onChange={this.handleChange('foodSearch')}
+              type="search"
+              fullWidth
+              margin="normal"
+            />
           </form>
-          {searchResults}
+
+          <List style={{overflow: 'scroll'}}>
+            {searchResults}
+          </List>
+
         </Drawer>
         
       </div>
@@ -52,6 +65,7 @@ class SearchResult extends React.Component {
     super(props);
     this.state = {
       amount: '',
+      open: false,
     }
   }
 
@@ -71,14 +85,49 @@ class SearchResult extends React.Component {
       .then(json => {
         if (json.errors)
           console.log(json.errors);
-        else this.props.onUpdate();
+        else {
+          this.handleClose();
+          this.props.onUpdate();
+        }
       });
   }
 
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleChange = prop => event => {
+    this.setState({ [prop]: event.target.value });
+  };
+
+  handleClose = () => {
+    this.setState({ amount: '', open: false });
   }
-  
+
+  render () {
+    return (
+      <div>
+        <ListItem button divider selected={this.state.open} onClick={() => this.setState({ open: true })} >
+          <ListItemText primary={this.props.name + ' - ' + this.props.serving_grams + 'g'} 
+            secondary={'F:' + this.props.fat + 'g C:'+ this.props.carb + 'g P:'+ this.props.protein + 'g'} />
+        </ListItem>
+
+        <Dialog open={this.state.open} onClose={this.handleClose} >
+          <form style={{ padding: 30 }} onSubmit={this.onSubmit} >
+            <TextField
+              label="Enter amount"
+              value={this.state.amount}
+              onChange={this.handleChange('amount')}
+              type="number"
+              fullWidth
+              margin="normal"
+              InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
+            />
+          </form>
+        </Dialog>
+      </div>
+    );
+  }
+}
+
+
+  /*
   render () {
     return (
       <div className="search-result"> 
@@ -92,5 +141,4 @@ class SearchResult extends React.Component {
         </form>
       </div>
     );
-  }
-}
+  }*/
