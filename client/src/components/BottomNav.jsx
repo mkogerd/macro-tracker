@@ -12,7 +12,10 @@ import FoodSearch from './FoodSearch';
 
 const styles = {
   root: {
-    width: 'auto',
+    width: '100%',
+    position: 'fixed',
+    bottom: 0,
+    paddingBottom: 5,
   },
 };
 
@@ -37,7 +40,7 @@ class BottomNav extends React.Component {
           showLabels
           className={classes.root}
         >
-          <BottomNavigationAction label="Logout" icon={<PowerIcon />} />
+          <BottomNavigationAction label="Logout" icon={<PowerIcon />} onClick={this.props.onLogout} />
           <BottomNavigationAction label="New Food" icon={<FastfoodIcon />} />
           <BottomNavigationAction label="Add" icon={<AddIcon />} />
         </BottomNavigation>

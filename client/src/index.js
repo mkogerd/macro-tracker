@@ -15,17 +15,22 @@ class App extends React.Component {
     this.state = {
       data: [],
       date: getDate(),
-      loggedIn: false,
+      loggedIn: localStorage.getItem('token'),
      };
 
+     this.handleUpdate();
      this.handleDayChange = this.handleDayChange.bind(this);
      this.handleDelete = this.handleDelete.bind(this);
-     this.handleUpdate = this.handleUpdate.bind(this);
   }
 
   handleLogin() {
     this.setState({loggedIn: true});
     this.handleUpdate();
+  }
+
+  handleLogout() {
+    this.setState({loggedIn: false});
+    localStorage.removeItem('token');
   }
 
   handleUpdate() {
@@ -77,11 +82,11 @@ class App extends React.Component {
       return <LoginMenu onLogin={() => this.handleLogin()} />;
     else {
       return (
-        <div>
+        <div style={{ paddingBottom: 61 }}>
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <DailyTotals date={this.state.date} />
           <RecordTable data={this.state.data} onDelete={this.handleDelete}/>
-          <BottomNav date={this.state.date} onUpdate={this.handleUpdate}/>
+          <BottomNav date={this.state.date} onUpdate={() => this.handleUpdate()} onLogout={() =>this.handleLogout()}/>
         </div>
       );
     }
