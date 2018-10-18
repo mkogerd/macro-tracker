@@ -1,42 +1,48 @@
 import React from 'react';
-/*import { Button, TextField, IconButton, InputAdornment, Tab, Tabs, Paper } from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';*/
+import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-export default function MealTable(props) {
+export default function RecordTable(props) {
   // Load meal entries collected from database
-  const mealEntries = props.data.map((entry, index) =>
-    <MealEntry key={index} onDelete={props.onDelete} {...entry}/>
+  const recordEntries = props.data.map((entry, index) =>
+    <RecordEntry key={index} onDelete={props.onDelete} {...entry}/>
   );
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Grams</th>
-          <th>Protein</th>
-          <th>Carb</th>
-          <th>Fat</th>
-        </tr>
-      </thead>
-      <tbody>
-        {mealEntries}
-      </tbody>
-    </table>
+    <Table style={{tableLayout: 'fixed'}}>
+      <TableHead>
+        <TableRow>
+          <TableCell>Name</TableCell>
+          <TableCell numeric>Grams</TableCell>
+          <TableCell numeric>Protein (g)</TableCell>
+          <TableCell numeric>Carbs (g)</TableCell>
+          <TableCell numeric>Fat (g)</TableCell>
+          <TableCell numeric></TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {recordEntries}
+      </TableBody>
+    </Table>
   );
 }
 
-function MealEntry(props) {
+function RecordEntry(props) {
   return (
-    <tr>
-      <td>{props.name}</td>
-      <td>{props.grams}</td>
-      <td>{props.protein}</td>
-      <td>{props.carb}</td>
-      <td>{props.fat}</td>
-      <td><button onClick={() => props.onDelete(props.id)}>X</button></td>
-    </tr>
+    <TableRow>
+      <TableCell component="th" scope="row" style={{overflow: 'hidden'}}>
+        {props.name}
+      </TableCell>
+      <TableCell numeric>{props.grams}</TableCell>
+      <TableCell numeric>{props.protein}</TableCell>
+      <TableCell numeric>{props.carb}</TableCell>
+      <TableCell numeric>{props.fat}</TableCell>
+      <TableCell numeric>
+        <IconButton aria-label="Delete" onClick={() => props.onDelete(props.id)}>
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </TableCell>
+    </TableRow>
   );
 }
 
