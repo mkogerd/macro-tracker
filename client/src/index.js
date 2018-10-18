@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 //import { NewFoodForm, LoginMenu, RecordTable } from './components';
-import NewFoodForm from './components/NewFoodForm';
 import LoginMenu from './components/LoginMenu';
 import RecordTable from './components/RecordTable';
 import DateForm from './components/DateForm';
 import DailyTotals from './components/DailyTotals';
+import BottomNav from './components/BottomNav';
 
 class SearchResult extends React.Component {
   constructor(props) {
@@ -173,11 +173,14 @@ class App extends React.Component {
           <DailyTotals date={this.state.date} />
           <RecordTable data={this.state.data} onDelete={this.handleDelete}/>
           <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()} />
-          <NewFoodForm />
+          <BottomNav />
         </div>
       );
     }
   }
+  handleChange = (event, value) => {
+    this.setState({ value });
+  };
 }
 
 // ========================================================

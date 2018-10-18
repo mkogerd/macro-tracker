@@ -1,4 +1,5 @@
 import React from 'react';
+import { Dialog, TextField, InputAdornment, Button } from '@material-ui/core';
 
 export default class NewFoodForm extends React.Component {
   constructor(props) {
@@ -12,9 +13,20 @@ export default class NewFoodForm extends React.Component {
     };
   }
 
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleClose = () => {
+    this.setState({
+      name: '',
+      protein: '',
+      carb: '',
+      fat: '',
+      serving_grams: '',
+    });
+    this.props.onClose();
   }
+
+  handleChange = prop => event => {
+    this.setState({ [prop]: event.target.value });
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -29,24 +41,65 @@ export default class NewFoodForm extends React.Component {
       body: JSON.stringify(this.state)
     })
       .then(response => response.json())
-      .then(json => console.log(json));
+      .then(json => {
+        if (json.errors)
+          console.log(json)
+        else 
+          this.handleClose();
+      });
   }
 
   render() {
     return (
-      <form onSubmit={this.onSubmit}>
-        <input name="name" type="text" placeholder="Enter food name"
-            value={this.state.name} onChange={this.onChange} /> 
-        <input name="protein" type="number" placeholder="Enter protein content" step="0.01"
-            value={this.state.protein} onChange={this.onChange} />g 
-        <input name="carb" type="number" placeholder="Enter carb content" step="0.01"
-            value={this.state.carb} onChange={this.onChange} />g 
-        <input name="fat" type="number" placeholder="Enter fat content" step="0.01"
-            value={this.state.fat} onChange={this.onChange} />g 
-        <input name="serving_grams" type="number" placeholder="Enter serving size" step="0.01"
-            value={this.state.serving_grams} onChange={this.onChange} />g
-        <input type="submit" value="Submit"/>
-      </form>
+      <Dialog open={this.props.open || false} onClose={this.handleClose}>
+        <form style={{textAlign: 'center', padding: 30}} onSubmit={this.onSubmit}>
+          <TextField
+            label="Food name"
+            value={this.state.name}
+            onChange={this.handleChange('name')}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Serving size"
+            value={this.state.serving_grams}
+            onChange={this.handleChange('serving_grams')}
+            type="number"
+            fullWidth
+            margin="normal"
+            InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
+          />
+          <TextField
+            label="Fat per serving"
+            value={this.state.fat}
+            onChange={this.handleChange('fat')}
+            type="number"
+            fullWidth
+            margin="normal"
+            InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
+          />
+          <TextField
+            label="Carbs per serving"
+            value={this.state.carb}
+            onChange={this.handleChange('carb')}
+            type="number"
+            fullWidth
+            margin="normal"
+            InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
+          />
+          <TextField
+            label="Protein per serving"
+            value={this.state.protein}
+            onChange={this.handleChange('protein')}
+            type="number"
+            fullWidth
+            margin="normal"
+            InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
+          />
+          <Button style={{float: 'left'}} variant="contained" color="secondary" onClick={this.handleClose}>Cancel</Button>
+          <Button style={{float: 'right'}} variant="contained" color="primary" type="submit">Submit</Button>
+        </form>
+      </Dialog>
     );
   }
 }
