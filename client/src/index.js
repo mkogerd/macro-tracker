@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+//import { NewFoodForm, LoginMenu, RecordTable } from './components';
 import NewFoodForm from './components/NewFoodForm';
 import LoginMenu from './components/LoginMenu';
+import RecordTable from './components/RecordTable';
 
 
 class DateForm extends React.Component {
@@ -55,43 +57,6 @@ class DailyTotals extends React.Component {
       </div>
     );
   }
-}
-
-function MealEntry(props) {
-  return (
-    <tr>
-      <td>{props.name}</td>
-      <td>{props.grams}</td>
-      <td>{props.protein}</td>
-      <td>{props.carb}</td>
-      <td>{props.fat}</td>
-      <td><button onClick={() => props.onDelete(props.id)}>X</button></td>
-    </tr>
-  );
-}
-
-function MealTable(props) {
-  // Load meal entries collected from database
-  const mealEntries = props.data.map((entry, index) =>
-    <MealEntry key={index} onDelete={props.onDelete} {...entry}/>
-  );
-
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Grams</th>
-          <th>Protein</th>
-          <th>Carb</th>
-          <th>Fat</th>
-        </tr>
-      </thead>
-      <tbody>
-        {mealEntries}
-      </tbody>
-    </table>
-  );
 }
 
 class SearchResult extends React.Component {
@@ -192,7 +157,7 @@ class App extends React.Component {
 
     this.state = {
       data: [],
-      date: new Date().toJSON().substring(0,10),
+      date: getDate(),
       loggedIn: false,
      };
 
@@ -257,7 +222,7 @@ class App extends React.Component {
         <div>
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
           <DailyTotals date={this.state.date} />
-          <MealTable data={this.state.data} onDelete={this.handleDelete}/>
+          <RecordTable data={this.state.data} onDelete={this.handleDelete}/>
           <FoodSearch date={this.state.date} onUpdate={() => this.handleUpdate()} />
           <NewFoodForm />
         </div>
@@ -269,3 +234,10 @@ class App extends React.Component {
 // ========================================================
 
 ReactDOM.render(<App />, document.getElementById('root'));
+
+// ================ Helper functions ===================
+function getDate() {
+  let date = new Date();
+  return date.getFullYear() + '-' + (date.getMonth() + 1 )+ '-' + date.getDate();
+}
+
