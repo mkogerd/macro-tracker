@@ -5,22 +5,12 @@ import './index.css';
 import NewFoodForm from './components/NewFoodForm';
 import LoginMenu from './components/LoginMenu';
 import RecordTable from './components/RecordTable';
+import DateForm from './components/DateForm';
 
 
-class DateForm extends React.Component {
-  render() {
-    return (
-      <div>
-	<button onClick={() => this.props.onDayChange(-1)} >Previous</button>
-        <input type="date" value={this.props.date} onChange={this.props.onDateChange} />
-        <button onClick={() => this.props.onDayChange(1)} >Next</button>
-      </div>
-    )
-  }
-}
+
 
 class DailyTotals extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +19,6 @@ class DailyTotals extends React.Component {
       fat: 0,
       cal: 0,
     }
-    
   }
 
   componentWillReceiveProps(nextProps) {
