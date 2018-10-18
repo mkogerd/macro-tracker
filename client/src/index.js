@@ -6,47 +6,7 @@ import NewFoodForm from './components/NewFoodForm';
 import LoginMenu from './components/LoginMenu';
 import RecordTable from './components/RecordTable';
 import DateForm from './components/DateForm';
-
-
-
-
-class DailyTotals extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      carb: 0,
-      protein: 0,
-      fat: 0,
-      cal: 0,
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Update daily macro totals
-    fetch('http://localhost:5000/totals?date='+nextProps.date, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-      .then(response => response.json())
-      .then(json => {this.setState(json)});
-  }
-
-
-  render() {
-    return (
-      <div>
-        <span>C:{this.state.carb}g </span>
-        <span>P:{this.state.protein}g </span>
-        <span>F:{this.state.fat}g </span>
-        <span>kCals:{this.state.cal}g</span>
-      </div>
-    );
-  }
-}
+import DailyTotals from './components/DailyTotals';
 
 class SearchResult extends React.Component {
   constructor(props) {
