@@ -8,6 +8,7 @@ import FastfoodIcon from '@material-ui/icons/Fastfood';
 import AddIcon from '@material-ui/icons/Add';
 
 import NewFoodForm from './NewFoodForm'
+import FoodSearch from './FoodSearch';
 
 const styles = {
   root: {
@@ -42,6 +43,8 @@ class BottomNav extends React.Component {
         </BottomNavigation>
 
         <NewFoodForm open={value === 1} onClose={() => this.setState({value: -1})} />
+        <FoodSearch open={value === 2} onClose={() => this.setState({value: -1})}  date={this.props.date} onUpdate={this.props.onUpdate}/>
+
       </div>
     );
   }
