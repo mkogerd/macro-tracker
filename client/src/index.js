@@ -1,105 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import NewFoodForm from './components/NewFoodForm';
+import LoginMenu from './components/LoginMenu';
 
-class RegisterForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-    };
-  }
-
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
- 
-  onSubmit = (e) => {
-    e.preventDefault();
-
-    // Send registration form state to API
-    fetch('http://localhost:5000/register', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => response.json())
-      .then(json => console.log(json));
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.onSubmit}>
-	<h3>Register</h3>
-        <label htmlFor="username">Enter username</label>
-        <input name="username" type="text" 
-          value={this.state.username} onChange={this.onChange} />
-
-        <label htmlFor="password">Enter password</label>
-        <input name="password" type="password" 
-          value={this.state.password} onChange={this.onChange} />
-
-        <button>Send data!</button>
-      </form>
-    );
-  }
-}
-
-class LoginForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-    };
-  }
-
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
- 
-  onSubmit = (e) => {
-    e.preventDefault();
-
-    // Send registration form state to API
-    fetch('http://localhost:5000/login', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => response.json())
-      .then(json => {
-	      if (json.token) {
-           localStorage.token = json.token;
-           this.props.onLogin();
-        } else console.log(json);
-      });
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.onSubmit}>
-	      <h3>Login</h3>
-        <label htmlFor="username">Enter username</label>
-        <input name="username" type="text" 
-          value={this.state.username} onChange={this.onChange} />
-
-        <label htmlFor="password">Enter password</label>
-        <input name="password" type="password" 
-          value={this.state.password} onChange={this.onChange} />
-
-        <button>Send data!</button>
-      </form>
-    );
-  }
-}
 
 class DateForm extends React.Component {
   render() {
@@ -280,56 +184,7 @@ class FoodSearch extends React.Component {
   }
 }
 
-class NewFoodForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      protein: '',
-      carb: '',
-      fat: '',
-      serving_grams: '',
-    };
-  }
 
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-
-  onSubmit = (e) => {
-    e.preventDefault();
-    // Send new food data to API to add to food listing
-    fetch('http://localhost:5000/foods', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => response.json())
-      .then(json => console.log(json));
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input name="name" type="text" placeholder="Enter food name"
-            value={this.state.name} onChange={this.onChange} /> 
-        <input name="protein" type="number" placeholder="Enter protein content" step="0.01"
-            value={this.state.protein} onChange={this.onChange} />g 
-        <input name="carb" type="number" placeholder="Enter carb content" step="0.01"
-            value={this.state.carb} onChange={this.onChange} />g 
-        <input name="fat" type="number" placeholder="Enter fat content" step="0.01"
-            value={this.state.fat} onChange={this.onChange} />g 
-        <input name="serving_grams" type="number" placeholder="Enter serving size" step="0.01"
-            value={this.state.serving_grams} onChange={this.onChange} />g
-        <input type="submit" value="Submit"/>
-      </form>
-    );
-  }
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -395,14 +250,9 @@ class App extends React.Component {
   }
 
   render() {
-    if (!this.state.loggedIn) {
-      return (
-        <div>
-          <RegisterForm />
-          <LoginForm onLogin={() => this.handleLogin()} />
-        </div>
-      );
-    } else {
+    if (!this.state.loggedIn)
+      return <LoginMenu onLogin={() => this.handleLogin()} />;
+    else {
       return (
         <div>
           <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
