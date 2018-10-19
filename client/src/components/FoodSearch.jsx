@@ -93,7 +93,11 @@ class SearchResult extends React.Component {
   }
 
   handleChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
+    let val = event.target.value;
+    let regex = /^([0-9]?)+(\.[0-9]?[0-9]?)?$/;
+    if (regex.test(val))
+      this.setState({ [prop]: val });
+
   };
 
   handleClose = () => {

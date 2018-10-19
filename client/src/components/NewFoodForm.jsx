@@ -25,7 +25,10 @@ export default class NewFoodForm extends React.Component {
   }
 
   handleChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
+    let val = event.target.value;
+    let regex = /^([0-9]?)+(\.[0-9]?[0-9]?)?$/;
+    if (prop === 'name' || regex.test(val))
+      this.setState({ [prop]: val });
   };
 
   onSubmit = (e) => {
