@@ -9,11 +9,11 @@ export default function RecordTable(props) {
   );
 
   return (
-    <Table style={{tableLayout: 'fixed'}}>
+    <Table style={{ tableLayout: 'fixed' }}>
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
-          <TableCell numeric>Grams</TableCell>
+          <TableCell numeric>Amount (g)</TableCell>
           <TableCell numeric>Protein (g)</TableCell>
           <TableCell numeric>Carbs (g)</TableCell>
           <TableCell numeric>Fat (g)</TableCell>
