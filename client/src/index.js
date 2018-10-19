@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 //import { NewFoodForm, LoginMenu, RecordTable } from './components';
 import LoginMenu from './components/LoginMenu';
 import RecordTable from './components/RecordTable';

@@ -1,9 +1,0 @@
-.search-result {
-	padding: 5px;
-	color: green;
-	display: grid;
-	grid-template-areas:
-		"name size size input"
-		"pro carb fat input";
-}
-
