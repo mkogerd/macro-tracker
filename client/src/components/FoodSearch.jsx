@@ -20,15 +20,16 @@ export default class FoodSearch extends React.Component {
     fetch('http://localhost:5000/foods?food='+this.state.foodSearch)
       .then(response => response.json())
       .then(json => {
-        if (json.errors)
-          console.log(json);
+        if (json.errors) {
+          this.props.onError(json);
+        }
         else this.setState({results: json});
       });
   }
 
   render() {
     const searchResults = this.state.results.map((entry) =>
-      <SearchResult onUpdate={this.props.onUpdate} date={this.props.date} key={entry.id} {...entry}/>
+      <SearchResult onUpdate={this.props.onUpdate} date={this.props.date} key={entry.id} onError={this.props.onError} {...entry}/>
     );
 
     return (
@@ -83,8 +84,9 @@ class SearchResult extends React.Component {
     })
       .then(response => response.json())
       .then(json => {
-        if (json.errors)
-          console.log(json.errors);
+        if (json.errors) {
+          this.props.onError(json);
+        }
         else {
           this.handleClose();
           this.props.onUpdate();

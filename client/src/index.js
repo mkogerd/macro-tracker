@@ -7,8 +7,11 @@ import RecordTable from './components/RecordTable';
 import DateForm from './components/DateForm';
 import DailyTotals from './components/DailyTotals';
 import BottomNav from './components/BottomNav';
+import ErrorBar from './components/ErrorBar';
 
 import Grid from '@material-ui/core/Grid';
+
+
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +20,8 @@ class App extends React.Component {
     this.state = {
       data: [],
       date: getDate(),
-      loggedIn: localStorage.getItem('token'),
+      loggedIn: (localStorage.getItem('token') ? true : false),
+      error: '',
      };
 
      this.handleUpdate();
@@ -79,9 +83,19 @@ class App extends React.Component {
       });
   }
 
+  handleError(json) {
+    if (json.errors)
+      this.setState({ error: json.errors[0].msg });
+  }
+
   render() {
     if (!this.state.loggedIn)
-      return <LoginMenu onLogin={() => this.handleLogin()} />;
+      return (
+        <React.Fragment>
+          <LoginMenu onLogin={() => this.handleLogin()} onError={(json) => this.handleError(json)} />
+          <ErrorBar message={this.state.error} onError={(json) => this.handleError(json)} />
+        </React.Fragment>
+        );
     else {
       return (
         <div style={{ paddingBottom: 61 }}>
@@ -95,7 +109,9 @@ class App extends React.Component {
           </Grid>
 
           <RecordTable data={this.state.data} onDelete={this.handleDelete}/>
-          <BottomNav date={this.state.date} onUpdate={() => this.handleUpdate()} onLogout={() =>this.handleLogout()}/>
+          <BottomNav date={this.state.date} onUpdate={() => this.handleUpdate()} onLogout={() =>this.handleLogout()} onError={(json) => this.handleError(json)} />
+          <ErrorBar message={this.state.error} onError={(json) => this.handleError(json)} />
+
         </div>
       );
     }

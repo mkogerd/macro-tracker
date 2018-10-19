@@ -45,8 +45,8 @@ class BottomNav extends React.Component {
           <BottomNavigationAction label="Add" icon={<AddIcon />} />
         </BottomNavigation>
 
-        <NewFoodForm open={value === 1} onClose={() => this.setState({value: -1})} />
-        <FoodSearch open={value === 2} onClose={() => this.setState({value: -1})}  date={this.props.date} onUpdate={this.props.onUpdate}/>
+        <NewFoodForm open={value === 1} onClose={() => this.setState({value: -1})} onError={this.props.onError} />
+        <FoodSearch open={value === 2} onClose={() => this.setState({value: -1})}  date={this.props.date} onUpdate={this.props.onUpdate} onError={this.props.onError}/>
 
       </div>
     );

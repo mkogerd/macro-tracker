@@ -60,10 +60,6 @@ con.connect(function(err) {
 	console.log('Database has been set up.');
 });
 
-app.get('/', function(req, res) {
-	res.send('Hello World!')
-});
-
 app.get('/records', verifyToken, function(req, res) {
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if (err) console.log('Invalid token');
@@ -161,7 +157,6 @@ app.post('/foods', verifyToken,[ // Check if user input is valid
 				if (err) throw err;
 				else 
 					res.send({message:'Succesfully added food'});
-			//res.sendStatus(200); // Send success status
 			});
 		}
 	});
@@ -209,7 +204,7 @@ app.post('/login', [ // Check if user input is valid
 	con.query("SELECT password, id FROM users WHERE username=? LIMIT 1", user, (err, result, fields) => {
 		if (err) throw err;
 		if(result.length === 0) {
-			res.send({error: 'Username not found'});
+			res.send({errors: [{msg: 'Username not found'}]});
 			return;
 		}
 		// Compare password input to hashed password from database
@@ -220,7 +215,7 @@ app.post('/login', [ // Check if user input is valid
 					res.json({ token: token });
 				});
 			}
-			else res.send({error: 'Incorrect credentials'});
+			else res.send({errors: [{msg: 'Incorrect credentials'}]});
 		});
 	});
 });
@@ -248,7 +243,7 @@ app.post('/register', [ // Check if user input is valid
 				if (err) throw err;
 				res.send({message:'Succesfully registered!'});
 			} catch (err) {
-				res.send({error: err.sqlMessage}); // Most likely duplicate entry
+				res.send({errors: [{msg: err.sqlMessage}]}); // Most likely duplicate entry
 			}
 		});
 	});

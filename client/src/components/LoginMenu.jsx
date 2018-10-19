@@ -38,7 +38,8 @@ export default class LoginMenu extends React.Component {
            localStorage.token = json.token;
            this.props.onLogin();
         } else {
-          console.log(json);
+          if (json.errors)
+            this.props.onError(json);
         }
       });
   }
@@ -55,7 +56,10 @@ export default class LoginMenu extends React.Component {
       body: JSON.stringify(state)
     })
       .then(response => response.json())
-      .then(json => console.log(json));
+      .then(json => {
+        if (json.errors)
+          this.props.onError(json);
+      });
   }
 
   render() {

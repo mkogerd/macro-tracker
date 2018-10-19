@@ -46,7 +46,7 @@ export default class NewFoodForm extends React.Component {
       .then(response => response.json())
       .then(json => {
         if (json.errors)
-          console.log(json)
+          this.props.onError(json);
         else 
           this.handleClose();
       });
