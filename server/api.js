@@ -81,7 +81,9 @@ app.get('/records', verifyToken, function(req, res) {
 
 app.post('/records', verifyToken, [ // Check if user input is valid
 	check('weight')
-		.isFloat({lt: 100000, min: 0.01}).withMessage('Grams consumed must be a decimal from 0.01-99999')
+		.isFloat({lt: 100000, min: 0.01}).withMessage('Grams consumed must be a decimal from 0.01-99999'),
+	check('date')
+		.matches(/^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/).withMessage('Please use a valid date')
 	], (req, res) => {
 	const errors = validationResult(req);
   	if (!errors.isEmpty()) {
