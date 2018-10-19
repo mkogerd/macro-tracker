@@ -52,7 +52,7 @@ con.connect(function(err) {
 	// Create tables for user data, ingredient data, and consumption records
 	var sql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL UNIQUE, password BINARY(60) NOT NULL)";
 	con.query(sql, (err, result) => { if (err) throw err; });
-	var sql = "CREATE TABLE IF NOT EXISTS foods (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), protein DECIMAL(6,2), carb DECIMAL(6,2), fat DECIMAL(6,2), serving_grams DECIMAL(7,2))";
+	var sql = "CREATE TABLE IF NOT EXISTS foods (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), protein DECIMAL(6,2), carb DECIMAL(6,2), fat DECIMAL(6,2), serving_grams DECIMAL(7,2), UNIQUE (name, protein, carb, fat, serving_grams))";
 	con.query(sql, (err, result) => { if (err) throw err; });
 	var sql = "CREATE TABLE IF NOT EXISTS records (id INT AUTO_INCREMENT PRIMARY KEY, userID INT, foodID INT, date DATE NOT NULL, grams DECIMAL(7,2))";
 	con.query(sql, (err, result) => { if (err) throw err; });
@@ -127,8 +127,13 @@ app.get('/foods', [ // Check if user input is valid
   	} 
 
 	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food+'%', function (err, result, fields){
-		if (err) throw err;
-		res.send(result);
+		try {
+			if (err) throw err;
+			res.send(result);
+		} catch (err) {
+			res.send({errors: [{msg: err.sqlMessage}]}); // Most likely duplicate entry
+		}
+		
 	});
 });
 
@@ -156,9 +161,12 @@ app.post('/foods', verifyToken,[ // Check if user input is valid
 		if (err) console.log('Invalid token');
 		else {
 			con.query('INSERT INTO foods (name, protein, carb, fat, serving_grams) VALUES (?, ?, ?, ?, ?)', [req.body.name, req.body.protein, req.body.carb, req.body.fat, req.body.serving_grams], function (err, result, fields){
-				if (err) throw err;
-				else 
+				try {
+					if (err) throw err;
 					res.send({message:'Succesfully added food'});
+				} catch (err) {
+					res.send({errors: [{msg: err.sqlMessage}]}); // Most likely duplicate entry
+				}
 			});
 		}
 	});
