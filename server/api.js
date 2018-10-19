@@ -126,7 +126,7 @@ app.get('/foods', [ // Check if user input is valid
     	return res.status(422).json({ errors: errors.array() });
   	} 
 
-	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food, function (err, result, fields){
+	con.query("SELECT * FROM foods WHERE name LIKE ?", req.query.food+'%', function (err, result, fields){
 		if (err) throw err;
 		res.send(result);
 	});
