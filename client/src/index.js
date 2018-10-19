@@ -24,7 +24,7 @@ class App extends React.Component {
       error: '',
      };
 
-     this.handleUpdate();
+     if (this.state.loggedIn) this.handleUpdate();
      this.handleDayChange = this.handleDayChange.bind(this);
      this.handleDelete = this.handleDelete.bind(this);
   }
