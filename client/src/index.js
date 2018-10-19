@@ -8,6 +8,8 @@ import DateForm from './components/DateForm';
 import DailyTotals from './components/DailyTotals';
 import BottomNav from './components/BottomNav';
 
+import Grid from '@material-ui/core/Grid';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -83,8 +85,15 @@ class App extends React.Component {
     else {
       return (
         <div style={{ paddingBottom: 61 }}>
-          <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
-          <DailyTotals date={this.state.date} />
+          <Grid container alignItems="center" justify="center">
+            <Grid item xs={12} md={6} >
+              <DateForm date={this.state.date} onDateChange={(e) => this.handleDateChange(e)} onDayChange={this.handleDayChange} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DailyTotals date={this.state.date} />
+            </Grid>
+          </Grid>
+
           <RecordTable data={this.state.data} onDelete={this.handleDelete}/>
           <BottomNav date={this.state.date} onUpdate={() => this.handleUpdate()} onLogout={() =>this.handleLogout()}/>
         </div>

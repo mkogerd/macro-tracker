@@ -29,8 +29,7 @@ export default class DailyTotals extends React.Component {
 
   render() {
     return (
-      <div>
-      	<span style={{fontFamily: '"Roboto", sans-serif'}}>Totals:</span>
+      <div style={{ textAlign: 'center'}} >
         <Chip avatar={<Avatar style={{color: '#880000', background: '#FF6666'}}>P</Avatar>} label={this.state.protein+'g'}  />
         <Chip avatar={<Avatar style={{color: '#008800', background: '#66FF66'}}>C</Avatar>} label={this.state.carb+'g'}  />
         <Chip avatar={<Avatar style={{color: '#888800', background: '#FFFF66'}}>F</Avatar>} label={this.state.fat+'g'}  />
@@ -39,4 +38,3 @@ export default class DailyTotals extends React.Component {
     );
   }
 }
-

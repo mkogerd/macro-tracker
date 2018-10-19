@@ -8,7 +8,7 @@ import NavigateBefore from '@material-ui/icons/NavigateBeforeRounded';
 export default class DateForm extends React.Component {
   render() {
     return (
-      <div>
+      <div style={{textAlign: 'center'}} >
         <Button onClick={() => this.props.onDayChange(-1)}><NavigateBefore /></Button>
         <TextField type="date" value={this.props.date} onChange={this.props.onDateChange} />
 	    <Button onClick={() => this.props.onDayChange(1)}><NavigateNext /></Button>

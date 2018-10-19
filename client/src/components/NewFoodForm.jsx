@@ -65,6 +65,7 @@ export default class NewFoodForm extends React.Component {
             value={this.state.serving_grams}
             onChange={this.handleChange('serving_grams')}
             type="number"
+            inputProps={{step: 0.01}}
             fullWidth
             margin="normal"
             InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
@@ -74,6 +75,7 @@ export default class NewFoodForm extends React.Component {
             value={this.state.fat}
             onChange={this.handleChange('fat')}
             type="number"
+            inputProps={{step: 0.01}}
             fullWidth
             margin="normal"
             InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
@@ -83,6 +85,7 @@ export default class NewFoodForm extends React.Component {
             value={this.state.carb}
             onChange={this.handleChange('carb')}
             type="number"
+            inputProps={{step: 0.01}}
             fullWidth
             margin="normal"
             InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
@@ -92,6 +95,7 @@ export default class NewFoodForm extends React.Component {
             value={this.state.protein}
             onChange={this.handleChange('protein')}
             type="number"
+            inputProps={{step: 0.01}}
             fullWidth
             margin="normal"
             InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}

@@ -112,9 +112,10 @@ class SearchResult extends React.Component {
           <form style={{ padding: 30 }} onSubmit={this.onSubmit} >
             <TextField
               label="Enter amount"
-              value={this.state.amount}
-              onChange={this.handleChange('amount')}
               type="number"
+              value={this.state.amount}
+              inputProps={{step: 0.01}}
+              onChange={this.handleChange('amount')}
               fullWidth
               margin="normal"
               InputProps={{ endAdornment: (<InputAdornment position="end">(g)</InputAdornment>) }}
