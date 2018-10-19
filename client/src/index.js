@@ -60,7 +60,15 @@ class App extends React.Component {
   
   handleDayChange(i) {
     // Change date by a single day
-    let date = new Date(this.state.date);
+    let date;
+    let regex = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
+
+    // If  state.date is valid, use state.date. Otherwise just navigate from current date 
+    if (regex.test(this.state.date))
+      date = new Date(this.state.date);
+    else
+      date = new Date(getDate());
+
     date.setDate(date.getDate() + i);
     this.setState({date: date.toJSON().substring(0,10)}, () => {this.handleUpdate();});
   }
