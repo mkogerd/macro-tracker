@@ -125,20 +125,3 @@ class SearchResult extends React.Component {
     );
   }
 }
-
-
-  /*
-  render () {
-    return (
-      <div className="search-result"> 
-        <span style={{gridArea: 'name'}}>{this.props.name}</span>
-        <span style={{gridArea: 'size'}}>Serving: {this.props.serving_grams}g</span>
-        <span style={{gridArea: 'carb'}}>C:{this.props.carb}g</span>
-        <span style={{gridArea: 'pro'}}>P:{this.props.protein}g</span>
-        <span style={{gridArea: 'fat'}}>F:{this.props.fat}g</span>
-        <form style={{gridArea: 'input'}} onSubmit={this.onSubmit}>
-          <input type="number" name="amount" onChange={this.onChange} placeholder="Enter weight" step="0.01"></input>
-        </form>
-      </div>
-    );
-  }*/
