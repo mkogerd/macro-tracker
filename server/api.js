@@ -11,7 +11,7 @@ const { check, validationResult } = require('express-validator/check');
 
 require('dotenv').config();
 
-// configure lbraries and add express headers
+// configure libraries and add express headers
 app.use(bodyParser.json());
 app.use(expressValidator()); // This line must be immediately after any of the bodyParser middlewares
 app.use(function (req, res, next) {
