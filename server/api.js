@@ -1,4 +1,4 @@
-const mysql = require('mysql'),
+const mysql = require('mysql2'),
 	express = require('express'),
 	expressValidator = require('express-validator'),
 	bodyParser = require('body-parser'),
@@ -41,8 +41,11 @@ const con = mysql.createConnection({
 });
 
 con.connect(function(err) {
-	if (err) throw err;
-	console.log("Connected!");
+	if (err) {
+		console.log("Error connecting to database.");
+		throw err;
+	}
+	console.log("Successfully connected to database.");
 
 	// RESOURCE CREATION
 	// Create database if it doesn't exist 
