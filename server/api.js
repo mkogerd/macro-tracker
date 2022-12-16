@@ -9,6 +9,8 @@ const mysql = require('mysql2'),
 
 const { check, validationResult } = require('express-validator/check');
 
+const PORT = 3001
+
 require('dotenv').config();
 
 // configure libraries and add express headers
@@ -282,6 +284,6 @@ function verifyToken(req, res, next) {
 	}
 }
 
-app.listen(5000, () => {
-	console.log('App is listening on port 5000!');
+app.listen(PORT, () => {
+	console.log(`App is listening on port ${PORT}!`);
 });
