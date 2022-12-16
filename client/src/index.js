@@ -40,7 +40,7 @@ class App extends React.Component {
 
   handleUpdate() {
     // Update daily meal record
-    fetch('http://localhost:5000/records?date='+this.state.date, {
+    fetch('http://localhost:3001/records?date='+this.state.date, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -74,7 +74,7 @@ class App extends React.Component {
 
   handleDelete(id) {
     // Delete a record
-    fetch('http://localhost:5000/records?id='+id, {
+    fetch('http://localhost:3001/records?id='+id, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',

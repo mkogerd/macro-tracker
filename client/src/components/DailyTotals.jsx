@@ -14,7 +14,7 @@ export default class DailyTotals extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // Update daily macro totals
-    fetch('http://localhost:5000/totals?date='+nextProps.date, {
+    fetch('http://localhost:3001/totals?date='+nextProps.date, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',

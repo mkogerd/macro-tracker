@@ -24,7 +24,7 @@ export default class LoginMenu extends React.Component {
   // Attempt to log a user in
   handleLogin = (state) => {
     // Send registration form state to API
-    fetch('http://localhost:5000/login', {
+    fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -47,7 +47,7 @@ export default class LoginMenu extends React.Component {
   // Attempt to register a new user
   handleRegister = (state) => {
     // Send registration form state to API
-    fetch('http://localhost:5000/register', {
+    fetch('http://localhost:3001/register', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
