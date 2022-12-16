@@ -13,7 +13,7 @@ npm start
 This will spin up a development server on port `:3000` of your local machine.
 
 ## Running with Docker
-The recommended to deploy this project is with docker. To run with docker, first build the image with:
+The recommended way to deploy this project is with docker. To run with docker, first build the image with:
 ```
 docker build -t macro-web-client .
 ```
