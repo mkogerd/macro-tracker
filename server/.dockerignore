@@ -1,0 +1,9 @@
+# Remove docker files
+Dockerfile
+.dockerignore
+
+# Remove dependency files to minimize image size
+node_modules
+
+# Remove markdown files
+*.md
