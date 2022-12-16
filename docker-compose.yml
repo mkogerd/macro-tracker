@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  web-server:
+    build: ./client
+    ports:
+      - "3000:3000"
+
+  api-server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    depends_on:
+      mysql-database:
+        condition: service_healthy
+
+  mysql-database:
+    image: "mysql"
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
