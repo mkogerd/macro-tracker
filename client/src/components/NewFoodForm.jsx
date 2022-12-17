@@ -34,7 +34,7 @@ export default class NewFoodForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     // Send new food data to API to add to food listing
-    fetch('http://localhost:3001/foods', {
+    fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/foods`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
