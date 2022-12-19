@@ -11,7 +11,7 @@ export default class DateForm extends React.Component {
       <div style={{textAlign: 'center'}} >
         <Button onClick={() => this.props.onDayChange(-1)}><NavigateBefore /></Button>
         <TextField type="date" value={this.props.date} onChange={this.props.onDateChange} />
-	    <Button onClick={() => this.props.onDayChange(1)}><NavigateNext /></Button>
+        <Button onClick={() => this.props.onDayChange(1)}><NavigateNext /></Button>
       </div>
     )
   }

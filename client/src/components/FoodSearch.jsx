@@ -17,7 +17,7 @@ export default class FoodSearch extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     // Query database for specified food
-    fetch('http://localhost:3001/foods?food='+this.state.foodSearch)
+    fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/foods?food=`+this.state.foodSearch)
       .then(response => response.json())
       .then(json => {
         if (json.errors) {
@@ -73,7 +73,7 @@ class SearchResult extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     // Send new record data to API to update user record
-    fetch('http://localhost:3001/records', {
+    fetch(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/records`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
