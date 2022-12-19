@@ -44,10 +44,10 @@ const con = mysql.createConnection({
 
 con.connect(function(err) {
 	if (err) {
-		console.log("Error connecting to database.");
+		console.log(`Error connecting to database at: ${process.env.DB_HOST}`);
 		throw err;
 	}
-	console.log("Successfully connected to database.");
+	console.log(`Successfully connected to database at: ${process.env.DB_HOST}.`);
 
 	// RESOURCE CREATION
 	// Create database if it doesn't exist 
