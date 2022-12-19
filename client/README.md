@@ -4,6 +4,13 @@ This module contains the frontend client code and the web server responsible for
 ## Compatibility
 This project requires node v17+ to run.
 
+## Configuration
+To configure the frontend client to connect to the supporting backend API, copy the template from `.env.default` to a new `.env` file and fill in the specified values. For example:
+```shell
+REACT_APP_API_HOST=localhost
+REACT_APP_API_PORT=3001
+```
+
 ## Running with Node
 The recommended way to run this project for development is with node. To do so, run the following command:
 ```
