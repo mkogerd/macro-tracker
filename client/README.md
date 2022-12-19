@@ -27,7 +27,7 @@ docker build -t macro-web-client .
 
 The image can then be run with:
 ```
-docker container run <EXTERNAL_PORT>:3000 -d macro-web-client
+docker container run -p <EXTERNAL_PORT>:3000 -d macro-web-client
 ```
 
 For example, running `docker container run -p 3000:3000 -d macro-web-client` will allow the web-client to be accessed at `localhost:3000`.

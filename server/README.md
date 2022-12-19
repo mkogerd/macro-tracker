@@ -38,7 +38,7 @@ docker build -t macro-api-server .
 
 The image can then be run with:
 ```
-docker container run <EXTERNAL_PORT>:3001 -d macro-api-server
+docker container run -p <EXTERNAL_PORT>:3001 -d macro-api-server
 ```
 
 For example, running `docker container run -p 3001:3001 -d macro-api-server` will allow the REST API to be accessed at `localhost:3001`.
